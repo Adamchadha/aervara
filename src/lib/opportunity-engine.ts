@@ -30,7 +30,8 @@ export type OpportunityEngineRead = {
   keyFlags: string[];
 };
 
-function zoningSignals(zoning: string): {
+/** Zoning text heuristics (mixed-use patterns, unknown/TBD). */
+export function getZoningFlags(zoning: string): {
   mixedUse: boolean;
   unknownOrAmbiguous: boolean;
 } {
@@ -108,7 +109,7 @@ export function computeComplexityScore(args: {
   opportunityValueIndex: number;
   estimatedValuePerSqft: number | null;
 }): number {
-  const { mixedUse, unknownOrAmbiguous } = zoningSignals(args.zoningDistrict);
+  const { mixedUse, unknownOrAmbiguous } = getZoningFlags(args.zoningDistrict);
   const oppI = clamp(args.opportunityValueIndex, 0, 100);
   const rateI = estimatedValuePerSqftIndex(args.estimatedValuePerSqft);
   let c = 52;
@@ -333,7 +334,7 @@ export function getOpportunityEngineRead(p: PropertyRow): OpportunityEngineRead 
   const lot = num(p.lot_size_sqft);
   const maxF = num(p.max_far);
   const ub = clamp(m.underbuilt_score, 0, 100);
-  const { mixedUse } = zoningSignals(p.zoning_district);
+  const { mixedUse } = getZoningFlags(p.zoning_district);
   const estRate =
     p.estimated_value_per_sqft == null
       ? null

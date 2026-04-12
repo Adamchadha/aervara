@@ -11,11 +11,13 @@ import {
   formatSqft,
 } from "@/lib/far-calculations";
 import { FarBuildoutGauge } from "@/components/properties/far-buildout-gauge";
+import { DealMemoPanel } from "@/components/properties/deal-memo-panel";
 import { InvestmentReadPanel } from "@/components/properties/investment-read-panel";
 import { DealCalculator } from "@/components/properties/deal-calculator";
 import { QuickDealCalculator } from "@/components/properties/quick-deal-calculator";
 import { getDisplayMetricsForRow } from "@/lib/property-display-metrics";
 import { getDevelopmentAnalysisForProperty } from "@/lib/development-analysis";
+import { getDealMemo } from "@/lib/deal-memo";
 import { getOpportunityEngineRead } from "@/lib/opportunity-engine";
 import { cn } from "@/lib/utils";
 import type { PropertyRow } from "@/types/property";
@@ -52,6 +54,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
   const m = getDisplayMetricsForRow(p);
   const dev = getDevelopmentAnalysisForProperty(p);
   const engineRead = getOpportunityEngineRead(p);
+  const dealMemo = getDealMemo(p, engineRead);
 
   return (
     <div className="space-y-12 lg:space-y-16">
@@ -260,8 +263,10 @@ export default async function PropertyDetailPage({ params }: PageProps) {
           />
         </div>
 
-        <div className="px-8 pb-10 pt-10 md:px-10 md:pb-12">
-          <div className="mb-10 h-px bg-gradient-to-r from-transparent via-neutral-200/50 to-transparent" />
+        <div className="space-y-10 px-8 pb-10 pt-10 md:px-10 md:pb-12">
+          <div className="h-px bg-gradient-to-r from-transparent via-neutral-200/50 to-transparent" />
+          <DealMemoPanel memo={dealMemo} />
+          <div className="h-px bg-gradient-to-r from-transparent via-neutral-200/50 to-transparent" />
           <InvestmentReadPanel
             embedded
             read={engineRead}

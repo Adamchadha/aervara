@@ -12,6 +12,7 @@ import { getDisplayMetricsForRow } from "@/lib/property-display-metrics";
 import { getDevelopmentAnalysisForProperty } from "@/lib/development-analysis";
 import { FarBuildoutGauge } from "@/components/properties/far-buildout-gauge";
 import { PropertyStatusBadge } from "@/components/properties/property-status-badge";
+import { getDealMemo } from "@/lib/deal-memo";
 import { getOpportunityEngineRead } from "@/lib/opportunity-engine";
 import { cn } from "@/lib/utils";
 import type { PropertyRow } from "@/types/property";
@@ -37,6 +38,7 @@ export function PropertyCard({
   const m = getDisplayMetricsForRow(p);
   const dev = getDevelopmentAnalysisForProperty(p);
   const read = getOpportunityEngineRead(p);
+  const dealMemo = getDealMemo(p, read);
   const tier = underbuiltTier(m.underbuilt_score);
   const badgeClass = underbuiltBadgeClass(tier);
   const tierLabel =
@@ -153,6 +155,14 @@ export function PropertyCard({
                   </span>
                 ))}
               </div>
+              <p className="mt-4 border-t border-neutral-200/40 pt-3 text-[11px] leading-snug text-neutral-600">
+                <span className="font-semibold uppercase tracking-wide text-neutral-400">
+                  Next step
+                </span>
+                <span className="mt-1 block font-medium text-neutral-800">
+                  {dealMemo.suggestedNextStep}
+                </span>
+              </p>
             </div>
           </div>
         </div>
