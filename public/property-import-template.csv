@@ -1,4 +1,4 @@
-address,city,state,zoning,lot_size,built_sqft,max_far,est_value_per_sqft
-"123 Main St",Metropolis,NY,R10,5000,"12,000",3,425.50
-"456 Oak Ave",Metropolis,NY,C6-4,"10,000","80,000",10,$310.00
-"789 Pine Rd",Metropolis,NY,MXD,"7,500","22,500",4.5,
+address,city,state,zoning,lot_size,built_sqft,max_far,est_value_per_sqft,status
+"123 Main St",Metropolis,NY,R10,5000,"12,000",3,425.50,New
+"456 Oak Ave",Metropolis,NY,C6-4,"10,000","80,000",10,$310.00,Reviewing
+"789 Pine Rd",Metropolis,NY,MXD,"7,500","22,500",4.5,,Priority

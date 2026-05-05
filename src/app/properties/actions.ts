@@ -18,45 +18,17 @@ import {
   type ParsedProperty,
 } from "@/lib/property-form-schema";
 import { PROPERTY_STATUSES } from "@/lib/property-status";
+import { buildPropertyInsertRow } from "@/lib/property-insert-row";
+import { fetchBillingRow } from "@/lib/billing-access";
+import { getPlanAccess } from "@/lib/plan-access";
+import { recordDealActivity } from "@/lib/property-deal-activity";
+import { isAdmin } from "@/lib/plan-gates";
+import { inferMaxFarFromZoning } from "@/lib/zoning-max-far";
 
 const uuidSchema = z.string().uuid("Invalid property id");
 const statusSchema = z.enum(PROPERTY_STATUSES);
 
 type SupabaseServer = Awaited<ReturnType<typeof createClient>>;
-
-function buildPropertyInsertRow(data: ParsedProperty, userId: string) {
-  const {
-    notes,
-    estimated_value_per_sqft,
-    construction_cost_per_sqft,
-    soft_cost_percentage,
-    exit_value_per_sqft,
-    ...rest
-  } = data;
-
-  const metrics = computeOpportunityMetrics(
-    rest.lot_size_sqft,
-    rest.built_floor_area_sqft,
-    rest.max_far,
-    estimated_value_per_sqft,
-  );
-  const derived = toStoredDerivedFields(metrics);
-
-  return {
-    ...rest,
-    notes: notes?.trim() ? notes.trim() : null,
-    estimated_value_per_sqft,
-    construction_cost_per_sqft,
-    soft_cost_percentage,
-    exit_value_per_sqft,
-    opportunity_value: derived.opportunity_value,
-    current_built_far: derived.current_built_far,
-    remaining_far: derived.remaining_far,
-    unused_buildable_sqft: derived.unused_buildable_sqft,
-    underbuilt_score: derived.underbuilt_score,
-    user_id: userId,
-  };
-}
 
 async function insertPropertyForUser(
   supabase: SupabaseServer,
@@ -119,6 +91,21 @@ export async function createProperty(
     return { error: "You must be signed in." };
   }
 
+  if (formData.get("demo_preview") === "1") {
+    return {
+      error:
+        "Demo preview does not save building records. Request full access to submit real data.",
+    };
+  }
+
+  const plan = await getPlanAccess(supabase, user.id, user.email);
+  if (!plan.isPlatformAdmin && !plan.canAddMoreProperties) {
+    return {
+      error:
+        "You have reached the property limit on your current plan. Request full access to add more buildings.",
+    };
+  }
+
   const { error: insertErr } = await insertPropertyForUser(
     supabase,
     user.id,
@@ -172,6 +159,16 @@ export async function updateProperty(
     return { error: "You must be signed in." };
   }
 
+  const { data: priorNotesRow } = await supabase
+    .from("properties")
+    .select("notes")
+    .eq("id", idParsed.data)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  const priorNotesTrim =
+    (priorNotesRow?.notes as string | null | undefined)?.trim() ?? "";
+
   const {
     notes,
     estimated_value_per_sqft,
@@ -180,11 +177,12 @@ export async function updateProperty(
     exit_value_per_sqft,
     ...rest
   } = parsed.data;
+  const resolvedMaxFar = rest.max_far ?? inferMaxFarFromZoning(rest.zoning_district);
 
   const metrics = computeOpportunityMetrics(
     rest.lot_size_sqft,
     rest.built_floor_area_sqft,
-    rest.max_far,
+    resolvedMaxFar,
     estimated_value_per_sqft,
   );
   const derived = toStoredDerivedFields(metrics);
@@ -193,6 +191,7 @@ export async function updateProperty(
     .from("properties")
     .update({
       ...rest,
+      max_far: resolvedMaxFar,
       notes: notes?.trim() ? notes.trim() : null,
       estimated_value_per_sqft,
       construction_cost_per_sqft,
@@ -216,6 +215,19 @@ export async function updateProperty(
 
   if (!updated) {
     return { error: "Property not found or you do not have access." };
+  }
+
+  const newNotesTrim = notes?.trim() ? notes.trim() : "";
+  if (newNotesTrim !== priorNotesTrim && newNotesTrim.length > 0) {
+    const detail =
+      newNotesTrim.length > 160 ? `${newNotesTrim.slice(0, 159)}…` : newNotesTrim;
+    await recordDealActivity(supabase, {
+      userId: user.id,
+      propertyId: idParsed.data,
+      eventType: "notes_added",
+      detail,
+      metadata: { source: "property" },
+    });
   }
 
   revalidatePath("/dashboard");
@@ -276,6 +288,52 @@ export async function updatePropertyStatus(
   return {};
 }
 
+export type MarkPropertyForLaterResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+/** Sets pipeline status to Reviewing — “save for later” without implying a human contact. */
+export async function markPropertyForLaterReview(
+  propertyId: string,
+): Promise<MarkPropertyForLaterResult> {
+  const idParsed = uuidSchema.safeParse(propertyId);
+  if (!idParsed.success) {
+    return { ok: false, error: "Invalid property." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { ok: false, error: "You must be signed in." };
+  }
+
+  const { data: row, error } = await supabase
+    .from("properties")
+    .update({
+      status: "Reviewing",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", idParsed.data)
+    .eq("user_id", user.id)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return { ok: false, error: error.message };
+  }
+  if (!row) {
+    return { ok: false, error: "Property not found or you do not have access." };
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath(`/properties/${idParsed.data}`);
+  revalidatePath(`/properties/${idParsed.data}/edit`);
+  return { ok: true };
+}
+
 export type DeletePropertyResult =
   | { success: false; message: string }
   | undefined;
@@ -311,6 +369,52 @@ export async function deleteProperty(
   redirect("/dashboard");
 }
 
+export type ApprovePropertyResult =
+  | { ok: true }
+  | { ok: false; error: string };
+
+export async function approveProperty(id: string): Promise<ApprovePropertyResult> {
+  const idParsed = uuidSchema.safeParse(id);
+  if (!idParsed.success) return { ok: false, error: "Invalid property id." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "You must be signed in." };
+  const billingForGate = await fetchBillingRow(supabase, user.id);
+  if (!isAdmin({ userId: user.id, email: user.email, billing: billingForGate })) {
+    return { ok: false, error: "Admin override required." };
+  }
+
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("properties")
+    .update({
+      status: "New",
+      needs_verification: false,
+      approved_by_admin: user.id,
+      approved_at: now,
+      updated_at: now,
+    })
+    .eq("id", idParsed.data)
+    .select("id")
+    .maybeSingle();
+
+  if (error) return { ok: false, error: error.message };
+  if (!data) return { ok: false, error: "Property not found." };
+
+  revalidatePath("/submissions");
+  revalidatePath("/dashboard");
+  return { ok: true };
+}
+
+export async function approveSubmittedBuilding(
+  propertyId: string,
+): Promise<ApprovePropertyResult> {
+  return approveProperty(propertyId);
+}
+
 export type ImportCsvState = {
   error?: string;
   rowErrors?: string[];
@@ -344,6 +448,14 @@ export async function importPropertiesFromCsv(
 
   if (!user) {
     return { error: "You must be signed in." };
+  }
+
+  const plan = await getPlanAccess(supabase, user.id, user.email);
+  if (!plan.canUseCsvImport) {
+    return {
+      error:
+        "CSV import unlocks with full access, including bulk import and unlimited properties.",
+    };
   }
 
   let text: string;

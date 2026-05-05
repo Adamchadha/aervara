@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatMoney, formatSqft } from "@/lib/far-calculations";
@@ -8,6 +8,7 @@ import {
   computeFullBuildableDeal,
   DEFAULT_SOFT_COST_PCT,
 } from "@/lib/development-analysis";
+import { AnimatedMoneyValue } from "@/components/ui/animated-money-value";
 import { cn } from "@/lib/utils";
 
 function parseOptionalRate(raw: string): number | null {
@@ -164,7 +165,12 @@ export function DealCalculator({
         />
         <OutRow
           label="Estimated profit"
-          value={formatMoney(model.estimated_profit)}
+          value={
+            <AnimatedMoneyValue
+              amount={model.estimated_profit}
+              className="inline-block"
+            />
+          }
           bold
         />
         <OutRow
@@ -185,7 +191,7 @@ function OutRow({
   bold,
 }: {
   label: string;
-  value: string;
+  value: ReactNode;
   hint?: string;
   bold?: boolean;
 }) {

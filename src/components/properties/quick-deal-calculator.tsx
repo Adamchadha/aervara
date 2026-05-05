@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatMoney, formatSqft } from "@/lib/far-calculations";
@@ -9,6 +9,7 @@ import {
   computeProfitMarginOnCostPercent,
   DEFAULT_SOFT_COST_PCT,
 } from "@/lib/development-analysis";
+import { AnimatedMoneyValue } from "@/components/ui/animated-money-value";
 import { cn } from "@/lib/utils";
 
 function parseOptionalRate(raw: string): number | null {
@@ -184,7 +185,12 @@ export function QuickDealCalculator({
         />
         <CalcRow
           label="Estimated profit"
-          value={formatMoney(result.estimated_profit)}
+          value={
+            <AnimatedMoneyValue
+              amount={result.estimated_profit}
+              className="inline-block"
+            />
+          }
           emphasize
         />
         <CalcRow
@@ -204,7 +210,7 @@ function CalcRow({
   emphasize,
 }: {
   label: string;
-  value: string;
+  value: ReactNode;
   hint?: string;
   emphasize?: boolean;
 }) {

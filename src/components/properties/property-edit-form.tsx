@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   updateProperty,
   type CreatePropertyState,
 } from "@/app/properties/actions";
+import { AnimatedMoneyValue } from "@/components/ui/animated-money-value";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -332,7 +333,7 @@ export function PropertyEditForm({ property }: PropertyEditFormProps) {
               value={formatFar(live.current_built_far)}
             />
             <EditMetric
-              label="Remaining FAR"
+              label="Unused vertical capacity"
               value={formatFar(live.remaining_far)}
             />
             <EditMetric
@@ -344,8 +345,8 @@ export function PropertyEditForm({ property }: PropertyEditFormProps) {
               value={`${live.underbuilt_score}%`}
             />
             <EditMetric
-              label="Opportunity value"
-              value={formatMoney(live.opportunity_value)}
+              label="Air rights value"
+              value={<AnimatedMoneyValue amount={live.opportunity_value} />}
               emphasize
             />
           </dl>
@@ -471,7 +472,7 @@ export function PropertyEditForm({ property }: PropertyEditFormProps) {
             />
             <EditMetric
               label="Estimated profit"
-              value={formatMoney(liveDev.estimated_profit)}
+              value={<AnimatedMoneyValue amount={liveDev.estimated_profit} />}
               emphasize
             />
           </dl>
@@ -515,7 +516,7 @@ function EditMetric({
   emphasize,
 }: {
   label: string;
-  value: string;
+  value: ReactNode;
   emphasize?: boolean;
 }) {
   return (

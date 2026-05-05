@@ -24,8 +24,8 @@ export function Logo({
     <Link
       href={href}
       className={cn(
-        "inline-flex shrink-0 items-center rounded-sm outline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-950",
-        variant === "nav" && "mr-3 md:mr-4",
+        "inline-flex shrink-0 items-center rounded-sm outline-offset-4 transition-opacity duration-300 ease-out hover:opacity-[0.88] motion-reduce:transition-none",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-950",
         variant === "auth" && "justify-center",
         className,
       )}

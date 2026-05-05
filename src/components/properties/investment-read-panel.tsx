@@ -95,10 +95,7 @@ export function InvestmentReadPanel({
 
   if (embedded) {
     return (
-      <div
-        className="overflow-hidden rounded-2xl border border-neutral-200/50 bg-gradient-to-br from-neutral-50/90 via-white to-white p-8 shadow-[0_20px_56px_-24px_rgba(15,23,42,0.12),0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-neutral-950/[0.04] md:p-10"
-        aria-labelledby="investment-read-heading"
-      >
+      <div className="space-y-8" aria-labelledby="investment-read-heading">
         {inner}
       </div>
     );
@@ -138,7 +135,7 @@ function ScoreBlock({
       <p
         className={cn(
           "mt-3 font-mono font-semibold tabular-nums tracking-tight text-neutral-950",
-          large ? "text-4xl md:text-5xl" : "text-3xl md:text-4xl",
+          large ? "text-4xl md:text-5xl lg:text-6xl" : "text-3xl md:text-4xl lg:text-[2.5rem]",
         )}
       >
         {value}

@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { DEFAULT_SOFT_COST_PCT } from "@/lib/development-analysis";
-import { PROPERTY_STATUSES } from "@/lib/property-status";
+import {
+  PROPERTY_STATUSES,
+  normalizePropertyStatus,
+} from "@/lib/property-status";
 
 const statusSchema = z.enum(PROPERTY_STATUSES);
 
@@ -37,8 +40,12 @@ export const propertySchema = z.object({
     z.coerce.number().min(0, "Built area cannot be negative"),
   ),
   max_far: z.preprocess(
-    normalizeNumericInput,
-    z.coerce.number().positive("Max FAR must be greater than 0"),
+    (raw) => {
+      const n = normalizeNumericInput(raw);
+      if (n === "" || n === null || n === undefined) return undefined;
+      return n;
+    },
+    z.coerce.number().positive("Max FAR must be greater than 0").optional(),
   ),
   notes: z.string().optional(),
   estimated_value_per_sqft: optionalPositiveUsd,
@@ -51,7 +58,10 @@ export const propertySchema = z.object({
     return typeof n === "string" ? n.trim() : n;
   }, z.coerce.number().min(0, "Min 0%").max(100, "Max 100%")),
   exit_value_per_sqft: optionalPositiveUsd,
-  status: statusSchema.default("New"),
+  status: z.preprocess(
+    (raw) => normalizePropertyStatus(raw == null ? undefined : String(raw)),
+    statusSchema,
+  ),
 });
 
 export type ParsedProperty = z.infer<typeof propertySchema>;

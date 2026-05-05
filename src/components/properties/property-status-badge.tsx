@@ -18,7 +18,7 @@ export function PropertyStatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em]",
         propertyStatusBadgeClass(s),
         className,
       )}

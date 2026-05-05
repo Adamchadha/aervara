@@ -5,12 +5,16 @@ export type FarMetrics = {
   /** Same as remaining FAR: max FAR minus built FAR, floored at 0. */
   far_gap: number;
   remaining_far: number;
+  /** UI alias for `remaining_far`. */
+  unused_vertical_capacity: number;
   unused_buildable_sqft: number;
 };
 
 export type OpportunityMetrics = FarMetrics & {
   current_built_far: number;
   opportunity_value: number | null;
+  /** UI alias for `opportunity_value`. */
+  air_rights_value: number | null;
   /** 0–100, whole percent. */
   underbuilt_score: number;
 };
@@ -39,6 +43,7 @@ export function computeFarMetrics(
       built_far: 0,
       far_gap: max,
       remaining_far: max,
+      unused_vertical_capacity: max,
       unused_buildable_sqft: 0,
     };
   }
@@ -53,6 +58,7 @@ export function computeFarMetrics(
     built_far,
     far_gap: remaining_far,
     remaining_far,
+    unused_vertical_capacity: remaining_far,
     unused_buildable_sqft,
   };
 }
@@ -94,6 +100,7 @@ export function computeOpportunityMetrics(
     ...base,
     current_built_far,
     opportunity_value,
+    air_rights_value: opportunity_value,
     underbuilt_score,
   };
 }
@@ -218,10 +225,10 @@ export function underbuiltTier(score: number): UnderbuiltTier {
 export function underbuiltBadgeClass(tier: UnderbuiltTier): string {
   switch (tier) {
     case "high":
-      return "border border-emerald-200/90 bg-emerald-50/90 text-emerald-900";
+      return "border border-emerald-200/70 bg-emerald-50/80 text-emerald-900 shadow-sm ring-1 ring-emerald-950/[0.04]";
     case "medium":
-      return "border border-amber-200/90 bg-amber-50/90 text-amber-950";
+      return "border border-amber-200/70 bg-amber-50/80 text-amber-950 shadow-sm ring-1 ring-amber-950/[0.04]";
     default:
-      return "border border-neutral-200/90 bg-neutral-100/80 text-neutral-600";
+      return "border border-neutral-200/70 bg-neutral-50/90 text-neutral-600 shadow-sm ring-1 ring-neutral-950/[0.03]";
   }
 }

@@ -8,8 +8,11 @@ export function LandingDashboardPreview({ className }: { className?: string }) {
     <div
       className={cn(
         "relative mx-auto max-w-5xl",
-        "rounded-2xl border border-neutral-200/60 bg-white",
+        "rounded-2xl border border-neutral-200/55 bg-white",
         "shadow-[0_2px_8px_rgba(15,23,42,0.04),0_32px_64px_-24px_rgba(15,23,42,0.12)] ring-1 ring-neutral-950/[0.04]",
+        "transition-[box-shadow,transform,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "motion-reduce:transition-none",
+        "hover:-translate-y-1 hover:border-neutral-200/80 hover:shadow-[0_24px_64px_-20px_rgba(15,23,42,0.14)] motion-reduce:hover:translate-y-0",
         className,
       )}
     >
@@ -87,9 +90,11 @@ function PreviewPropertyCard({
     <div
       className={cn(
         "flex flex-col overflow-hidden rounded-2xl border bg-white text-left",
+        "transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+        "hover:-translate-y-0.5 motion-reduce:hover:translate-y-0",
         muted
-          ? "border-neutral-200/70 shadow-sm ring-1 ring-neutral-950/[0.03]"
-          : "border-amber-200/50 shadow-[0_2px_12px_rgba(180,83,9,0.06),0_16px_40px_-20px_rgba(15,23,42,0.08)] ring-1 ring-amber-400/20",
+          ? "border-neutral-200/70 shadow-sm ring-1 ring-neutral-950/[0.03] hover:border-neutral-300/80 hover:shadow-[0_12px_32px_-16px_rgba(15,23,42,0.08)]"
+          : "border-amber-200/50 shadow-[0_2px_12px_rgba(180,83,9,0.06),0_16px_40px_-20px_rgba(15,23,42,0.08)] ring-1 ring-amber-400/20 hover:border-amber-200/70 hover:shadow-[0_8px_24px_rgba(180,83,9,0.08),0_20px_48px_-20px_rgba(15,23,42,0.1)]",
       )}
     >
       <div className="border-b border-neutral-100/80 px-5 pb-5 pt-5 sm:px-6 sm:pt-6">

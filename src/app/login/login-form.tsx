@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
+import { getSafeInternalRedirect } from "@/lib/safe-redirect";
 import { cn } from "@/lib/utils";
 
 type Mode = "signin" | "signup";
@@ -14,7 +15,10 @@ type Mode = "signin" | "signup";
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") ?? "/dashboard";
+  const redirectTo = getSafeInternalRedirect(
+    searchParams.get("redirect"),
+    "/dashboard",
+  );
   const authError = searchParams.get("error");
 
   const [mode, setMode] = useState<Mode>("signin");

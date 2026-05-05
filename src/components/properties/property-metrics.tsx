@@ -34,13 +34,16 @@ export function PropertyMetrics({
   const items = [
     { label: "Max buildable area", value: `${formatSqft(m.max_buildable_sqft)} sq ft` },
     { label: "Current built FAR", value: formatFar(m.current_built_far) },
-    { label: "Remaining FAR", value: formatFar(m.remaining_far) },
+    {
+      label: "Unused vertical capacity",
+      value: formatFar(m.unused_vertical_capacity),
+    },
     {
       label: "Unused buildable area",
       value: `${formatSqft(m.unused_buildable_sqft)} sq ft`,
     },
     { label: "Underbuilt score", value: formatScorePercent(m.underbuilt_score) },
-    { label: "Opportunity value", value: formatMoney(m.opportunity_value) },
+    { label: "Air rights value", value: formatMoney(m.air_rights_value) },
   ];
 
   return (
@@ -56,7 +59,7 @@ export function PropertyMetrics({
           key={label}
           className={cn(
             "rounded-md border border-neutral-100 bg-neutral-50/80 px-4 py-3",
-            label === "Opportunity value" &&
+            label === "Air rights value" &&
               "border-neutral-900/15 bg-white shadow-sm",
           )}
         >

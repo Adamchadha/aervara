@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 type DealMemoPanelProps = {
   memo: DealMemo;
   className?: string;
+  /** Flat layout when nested in Site Room section. */
+  embedded?: boolean;
 };
 
 function Rule() {
@@ -15,15 +17,9 @@ function Rule() {
   );
 }
 
-export function DealMemoPanel({ memo, className }: DealMemoPanelProps) {
+function DealMemoInner({ memo }: { memo: DealMemo }) {
   return (
-    <section
-      className={cn(
-        "overflow-hidden rounded-2xl border border-neutral-200/50 bg-gradient-to-b from-white via-white to-neutral-50/30 p-8 shadow-[0_20px_50px_-22px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.03)] ring-1 ring-neutral-950/[0.035] md:p-10",
-        className,
-      )}
-      aria-labelledby="deal-memo-heading"
-    >
+    <>
       <div className="flex items-start gap-4">
         <div
           className="mt-1 h-12 w-1 shrink-0 rounded-full bg-gradient-to-b from-neutral-800 to-neutral-600"
@@ -34,12 +30,12 @@ export function DealMemoPanel({ memo, className }: DealMemoPanelProps) {
             id="deal-memo-heading"
             className="text-[11px] font-bold uppercase tracking-[0.26em] text-neutral-500"
           >
-            Deal Memo
+            Deal memo
           </p>
-          <h2 className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
+          <h3 className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
             Executive summary
-          </h2>
-          <p className="mt-3 max-w-3xl text-base leading-[1.65] text-neutral-700">
+          </h3>
+          <p className="mt-4 max-w-3xl text-base leading-[1.7] text-neutral-700 sm:text-[1.0625rem]">
             {memo.executiveSummary}
           </p>
         </div>
@@ -80,14 +76,40 @@ export function DealMemoPanel({ memo, className }: DealMemoPanelProps) {
         </div>
       </div>
 
-      <div className="mt-10 rounded-xl border border-neutral-200/60 bg-neutral-50/50 px-5 py-4 ring-1 ring-neutral-950/[0.03]">
+      <div className="mt-11 rounded-xl border border-neutral-200/50 bg-neutral-50/40 px-5 py-4 shadow-sm ring-1 ring-neutral-950/[0.025] sm:px-6 sm:py-5">
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-neutral-400">
           Suggested next step
         </p>
-        <p className="mt-2 text-sm font-semibold tracking-tight text-neutral-950">
+        <p className="mt-2.5 text-sm font-semibold tracking-tight text-neutral-950 sm:text-base">
           {memo.suggestedNextStep}
         </p>
       </div>
+    </>
+  );
+}
+
+export function DealMemoPanel({
+  memo,
+  className,
+  embedded = false,
+}: DealMemoPanelProps) {
+  if (embedded) {
+    return (
+      <div className={cn("space-y-2", className)} aria-labelledby="deal-memo-heading">
+        <DealMemoInner memo={memo} />
+      </div>
+    );
+  }
+
+  return (
+    <section
+      className={cn(
+        "overflow-hidden rounded-[1.25rem] border border-neutral-200/45 bg-gradient-to-b from-white via-white to-neutral-50/25 p-9 shadow-[0_24px_64px_-28px_rgba(15,23,42,0.09),0_2px_10px_rgba(15,23,42,0.035)] ring-1 ring-neutral-950/[0.03] md:p-11",
+        className,
+      )}
+      aria-labelledby="deal-memo-heading"
+    >
+      <DealMemoInner memo={memo} />
     </section>
   );
 }

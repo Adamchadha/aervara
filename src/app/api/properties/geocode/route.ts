@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { nominatimGeocode, nominatimUserAgent } from "@/lib/nominatim-geocode";
+import { geocodePropertyRow, nominatimUserAgent } from "@/lib/nominatim-geocode";
 
 const bodySchema = z.object({
   propertyIds: z.array(z.string().uuid()).min(1).max(35),
@@ -61,9 +61,13 @@ export async function POST(req: Request) {
       await sleep(1100);
     }
     const row = rows[i];
-    const query = `${row.address}, ${row.city}, ${row.state}`;
     try {
-      const hit = await nominatimGeocode(query, ua);
+      const hit = await geocodePropertyRow(
+        row.address,
+        row.city,
+        row.state,
+        ua,
+      );
       results[row.id] = hit;
     } catch {
       results[row.id] = null;
