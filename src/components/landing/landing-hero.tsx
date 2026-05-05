@@ -83,6 +83,12 @@ export function LandingHero({
               {secondaryLabel}
             </Link>
           </div>
+          <Link
+            href="/demo"
+            className="mt-6 text-sm font-medium text-neutral-500 underline-offset-[5px] transition-colors hover:text-neutral-950 hover:underline"
+          >
+            Explore sample deals — no sign-in
+          </Link>
         </div>
       </div>
     </section>

@@ -18,6 +18,9 @@ type TakeActionPanelProps = {
   viewerRole: string | null;
   readOnly?: boolean;
   isDemo?: boolean;
+  /** Override apply next/source paths (e.g. public `/demo/property/…`). */
+  demoApplyNextPath?: string;
+  demoApplySourcePath?: string;
 };
 
 export function TakeActionPanel({
@@ -25,6 +28,8 @@ export function TakeActionPanel({
   viewerRole,
   readOnly = false,
   isDemo = false,
+  demoApplyNextPath,
+  demoApplySourcePath,
 }: TakeActionPanelProps) {
   const router = useRouter();
   const [saveState, setSaveState] = useState<"idle" | "pending" | "done" | "error">("idle");
@@ -53,9 +58,13 @@ export function TakeActionPanel({
 
   if (readOnly) {
     if (isDemo) {
+      const nextPath =
+        demoApplyNextPath ?? `/properties/${propertyId}?demo=true`;
+      const sourceRoute =
+        demoApplySourcePath ?? `/properties/${propertyId}?demo=true`;
       const accessHref = requestFullAccessHref({
-        nextPath: `/properties/${propertyId}?demo=true`,
-        sourceRoute: `/properties/${propertyId}?demo=true`,
+        nextPath,
+        sourceRoute,
       });
       return (
         <div className="space-y-5">

@@ -61,6 +61,13 @@ type PublicDemoPropertyExperienceProps = {
   builtSqft: number;
   maxFar: number;
   estValuePerSqft: number | null;
+  /** Hub link (default: dashboard with demo query). */
+  backHref?: string;
+  /** Apply-flow paths for Request Full Access (default: property URL with demo). */
+  applyNextPath?: string;
+  applySourcePath?: string;
+  /** Label for the hub link above the fold (default: Back to dashboard). */
+  backLinkLabel?: string;
 };
 
 /**
@@ -79,11 +86,17 @@ export function PublicDemoPropertyExperience({
   builtSqft: built,
   maxFar,
   estValuePerSqft: est,
+  backHref: backHrefProp,
+  applyNextPath,
+  applySourcePath,
+  backLinkLabel,
 }: PublicDemoPropertyExperienceProps) {
-  const backHref = demoAwarePath("/dashboard", true);
+  const backHref = backHrefProp ?? demoAwarePath("/dashboard", true);
   const accessHref = requestFullAccessHref({
-    nextPath: demoAwarePath(`/properties/${p.id}`, true),
-    sourceRoute: demoAwarePath(`/properties/${p.id}`, true),
+    nextPath:
+      applyNextPath ?? demoAwarePath(`/properties/${p.id}`, true),
+    sourceRoute:
+      applySourcePath ?? demoAwarePath(`/properties/${p.id}`, true),
   });
   const whyItMattersText = dealMemo.whyItMatters
     .map((s) => s.trim())
@@ -100,7 +113,7 @@ export function PublicDemoPropertyExperience({
           href={backHref}
           className="-ml-1 inline-flex rounded-xl px-2.5 py-1.5 text-sm font-medium text-neutral-500 transition-colors hover:bg-stone-100/90 hover:text-neutral-950"
         >
-          ← Back to dashboard
+          {backLinkLabel ?? "← Back to dashboard"}
         </Link>
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <span className="inline-flex items-center rounded-full border border-sky-200/80 bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-sky-900/90">
@@ -267,6 +280,8 @@ export function PublicDemoPropertyExperience({
             viewerRole={viewerRole}
             readOnly
             isDemo
+            demoApplyNextPath={applyNextPath}
+            demoApplySourcePath={applySourcePath}
           />
         ) : (
           <p className="text-sm text-neutral-600">

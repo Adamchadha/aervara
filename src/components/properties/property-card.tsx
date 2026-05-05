@@ -39,6 +39,8 @@ type PropertyCardProps = {
   highlightLabel?: string;
   /** Preserve `?demo=true` on the Site Room link. */
   isDemo?: boolean;
+  /** Override Site Room / detail href (e.g. `/demo/property/…`). */
+  detailHref?: string;
   /** Optional precomputed dashboard score (0-100). */
   opportunityScore?: number;
   /** Lighter frame for long pipeline lists (reduced border weight). */
@@ -50,9 +52,11 @@ export function PropertyCard({
   emphasize = false,
   highlightLabel,
   isDemo = false,
+  detailHref,
   opportunityScore,
   surface = "default",
 }: PropertyCardProps) {
+  const siteRoomHref = detailHref ?? withDemoQuery(`/properties/${p.id}`, isDemo);
   const m = getDisplayMetricsForRow(p);
   const dev = getDevelopmentAnalysisForProperty(p);
   const read = getOpportunityEngineRead(p);
@@ -123,7 +127,7 @@ export function PropertyCard({
         </div>
         <div className="mt-4 flex justify-end border-t border-stone-100/90 pt-3">
           <Link
-            href={withDemoQuery(`/properties/${p.id}`, isDemo)}
+            href={siteRoomHref}
             className="text-sm font-semibold text-emerald-600 transition-colors hover:text-emerald-500"
           >
             Open deal →
@@ -390,7 +394,7 @@ export function PropertyCard({
 
         <div className="mt-auto flex justify-end pb-7 pt-7">
           <Link
-            href={withDemoQuery(`/properties/${p.id}`, isDemo)}
+            href={siteRoomHref}
             className="rounded-lg px-2 py-1 text-sm font-semibold text-neutral-950 underline-offset-4 transition-colors hover:bg-neutral-100/80 hover:underline"
           >
             View details
