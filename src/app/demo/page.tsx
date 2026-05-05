@@ -34,7 +34,7 @@ export default function PublicDemoPage() {
             key={p.id}
             property={p}
             surface="airy"
-            detailHref={`/demo/property/${p.id}`}
+            detailHref={`/demo/properties/${p.id}`}
           />
         ))}
       </div>

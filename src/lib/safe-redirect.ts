@@ -26,6 +26,7 @@ export function getSafeInternalRedirect(
     "/",
     "/dashboard",
     "/properties",
+    "/demo",
     "/pricing",
     "/apply",
     "/admin",

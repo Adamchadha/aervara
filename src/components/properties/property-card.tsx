@@ -39,7 +39,7 @@ type PropertyCardProps = {
   highlightLabel?: string;
   /** Preserve `?demo=true` on the Site Room link. */
   isDemo?: boolean;
-  /** Override Site Room / detail href (e.g. `/demo/property/…`). */
+  /** Override Site Room / detail href (e.g. `/demo/properties/…`). */
   detailHref?: string;
   /** Optional precomputed dashboard score (0-100). */
   opportunityScore?: number;

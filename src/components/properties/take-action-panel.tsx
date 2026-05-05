@@ -18,7 +18,7 @@ type TakeActionPanelProps = {
   viewerRole: string | null;
   readOnly?: boolean;
   isDemo?: boolean;
-  /** Override apply next/source paths (e.g. public `/demo/property/…`). */
+  /** Override apply next/source paths (e.g. public `/demo/properties/…`). */
   demoApplyNextPath?: string;
   demoApplySourcePath?: string;
 };

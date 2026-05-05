@@ -77,6 +77,12 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+  /** Public sample workspace: never require login, approval, or onboarding. */
+  const isPublicDemoRoute = path === "/demo" || path.startsWith("/demo/");
+  if (isPublicDemoRoute) {
+    return attachProPreviewNavCookie(request, user, supabaseResponse);
+  }
+
   const isOnboardingPath = path.startsWith("/onboarding");
   const requiresAuth =
     path.startsWith("/dashboard") ||

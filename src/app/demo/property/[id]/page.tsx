@@ -36,7 +36,7 @@ export default async function PublicDemoPropertyPage({
     speedToValueScore: engineRead.speedToValueScore,
   });
 
-  const hubPath = `/demo/property/${p.id}`;
+  const hubPath = `/demo/properties/${p.id}`;
 
   return (
     <>
