@@ -46,18 +46,43 @@ const HERO_THESIS =
 type DashboardDealOverviewProps = {
   properties: PropertyRow[];
   isDemo?: boolean;
+  publicDemo?: boolean;
+  /** Public `/demo`: pin navy hero to this property id (stable sample lead). */
+  pinHeroPropertyId?: string;
+  /** Public `/demo`: display score on hero (dataset-relative scores can skew with injected upside). */
+  pinHeroOpportunityScore?: number;
   marketCities?: CityGroup[];
 };
 
 export function DashboardDealOverview({
   properties,
   isDemo = false,
+  publicDemo = false,
+  pinHeroPropertyId,
+  pinHeroOpportunityScore,
   marketCities = [],
 }: DashboardDealOverviewProps) {
   if (properties.length === 0) return null;
 
-  const [heroProp] = selectTopOpportunities(properties, 1);
-  const topThree = selectTopOpportunities(properties, 3);
+  function rankTop(limit: number): PropertyRow[] {
+    if (publicDemo) {
+      return [...properties]
+        .sort(
+          (a, b) =>
+            (getDisplayMetricsForRow(b).opportunity_value ?? 0) -
+            (getDisplayMetricsForRow(a).opportunity_value ?? 0),
+        )
+        .slice(0, limit);
+    }
+    return selectTopOpportunities(properties, limit);
+  }
+
+  const rankedFirst = rankTop(1)[0]!;
+  const heroProp =
+    pinHeroPropertyId != null
+      ? properties.find((p) => p.id === pinHeroPropertyId) ?? rankedFirst
+      : rankedFirst;
+  const topThree = rankTop(3);
   const scoreById = computeOpportunityScores(properties);
 
   const totalOpportunity = properties.reduce(
@@ -89,7 +114,9 @@ export function DashboardDealOverview({
   const heroM = getDisplayMetricsForRow(heroProp);
   const heroOpp = heroM.opportunity_value ?? 0;
   const heroScore =
-    scoreById.get(heroProp.id) ?? computeOpportunityScoreForProperty(heroProp);
+    pinHeroOpportunityScore ??
+    scoreById.get(heroProp.id) ??
+    computeOpportunityScoreForProperty(heroProp);
   const heroPriority = opportunityPriorityLabel(heroScore);
   const maxFar = num(heroProp.max_far);
   const farHeadroom = Math.max(0, maxFar - heroM.current_built_far);
@@ -111,11 +138,16 @@ export function DashboardDealOverview({
           thesisLine={HERO_THESIS}
           insightBullets={insightBullets}
           isDemo={isDemo}
+          publicDemo={publicDemo}
         />
       ) : null}
 
       {stripCities.length > 0 ? (
-        <MarketIntelligenceStrip cities={stripCities} isDemo={isDemo} />
+        <MarketIntelligenceStrip
+          cities={stripCities}
+          isDemo={isDemo}
+          publicDemo={publicDemo}
+        />
       ) : null}
 
       <DashboardMetricRow
@@ -168,6 +200,7 @@ export function DashboardDealOverview({
                 score={score}
                 priorityLabel={pr}
                 isDemo={isDemo}
+                publicDemo={publicDemo}
               />
             );
           })}

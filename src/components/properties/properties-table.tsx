@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { PropertyCard } from "@/components/properties/property-card";
-import { withDemoQuery } from "@/lib/demo-query";
+import { propertyDetailHref } from "@/lib/demo-query";
 import { formatMoney } from "@/lib/far-calculations";
 import { getDisplayMetricsForRow } from "@/lib/property-display-metrics";
 import { computeOpportunityScores } from "@/lib/opportunity-score";
@@ -18,6 +18,7 @@ type PropertiesTableProps = {
   /** Property ids that should read as “top deal” in the list (e.g. top 3 by rank). */
   topDealPropertyIds?: ReadonlySet<string>;
   isDemo?: boolean;
+  publicDemo?: boolean;
   listSurface?: "default" | "airy" | "pipeline";
 };
 
@@ -26,6 +27,7 @@ export function PropertiesTable({
   totalPipelineCount,
   topDealPropertyIds,
   isDemo = false,
+  publicDemo = false,
   listSurface = "pipeline",
 }: PropertiesTableProps) {
   const topSet = topDealPropertyIds ?? new Set<string>();
@@ -99,7 +101,7 @@ export function PropertiesTable({
                   </td>
                   <td className="px-4 py-3 text-right sm:px-5">
                     <Link
-                      href={withDemoQuery(`/properties/${p.id}`, isDemo)}
+                      href={propertyDetailHref(p.id, { isDemo, publicDemo })}
                       className="inline-flex rounded-md border border-emerald-200/70 bg-emerald-50/45 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-emerald-700 transition-colors hover:bg-emerald-50/80"
                     >
                       Open deal
@@ -123,6 +125,7 @@ export function PropertiesTable({
             emphasize={topSet.has(p.id)}
             highlightLabel={topSet.has(p.id) ? "Top deal" : undefined}
             isDemo={isDemo}
+            publicDemo={publicDemo}
             opportunityScore={scoreById.get(p.id)}
             surface={listSurface}
           />

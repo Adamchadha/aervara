@@ -6,12 +6,15 @@ import type { CityGroup } from "@/lib/city-scan";
 type MarketIntelligenceStripProps = {
   cities: CityGroup[];
   isDemo?: boolean;
+  /** Standalone `/demo`: city drill-down lives behind auth — render labels only. */
+  publicDemo?: boolean;
 };
 
 /** Bloomberg-style metadata row: city · unlocked · parcels. */
 export function MarketIntelligenceStrip({
   cities,
   isDemo = false,
+  publicDemo = false,
 }: MarketIntelligenceStripProps) {
   if (cities.length === 0) return null;
   return (
@@ -33,26 +36,44 @@ export function MarketIntelligenceStrip({
                 |
               </span>
             ) : null}
-            <Link
-              href={withDemoQuery(`/city/${encodeURIComponent(g.city)}`, isDemo)}
-              className="group inline-flex flex-wrap items-baseline gap-x-1.5 transition-colors hover:text-stone-950"
-            >
-              <span className="font-semibold text-stone-950 group-hover:text-stone-950">
-                {g.city}
+            {publicDemo ? (
+              <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
+                <span className="font-semibold text-stone-950">{g.city}</span>
+                <span className="text-stone-300" aria-hidden>
+                  ·
+                </span>
+                <span className="tabular-nums text-stone-700">
+                  {formatMoney(g.totalPotentialValueUnlocked)} unlocked
+                </span>
+                <span className="text-stone-300" aria-hidden>
+                  ·
+                </span>
+                <span className="tabular-nums text-stone-700">
+                  {g.count} parcel{g.count === 1 ? "" : "s"}
+                </span>
               </span>
-              <span className="text-stone-300" aria-hidden>
-                ·
-              </span>
-              <span className="tabular-nums text-stone-700">
-                {formatMoney(g.totalPotentialValueUnlocked)} unlocked
-              </span>
-              <span className="text-stone-300" aria-hidden>
-                ·
-              </span>
-              <span className="tabular-nums text-stone-700">
-                {g.count} parcel{g.count === 1 ? "" : "s"}
-              </span>
-            </Link>
+            ) : (
+              <Link
+                href={withDemoQuery(`/city/${encodeURIComponent(g.city)}`, isDemo)}
+                className="group inline-flex flex-wrap items-baseline gap-x-1.5 transition-colors hover:text-stone-950"
+              >
+                <span className="font-semibold text-stone-950 group-hover:text-stone-950">
+                  {g.city}
+                </span>
+                <span className="text-stone-300" aria-hidden>
+                  ·
+                </span>
+                <span className="tabular-nums text-stone-700">
+                  {formatMoney(g.totalPotentialValueUnlocked)} unlocked
+                </span>
+                <span className="text-stone-300" aria-hidden>
+                  ·
+                </span>
+                <span className="tabular-nums text-stone-700">
+                  {g.count} parcel{g.count === 1 ? "" : "s"}
+                </span>
+              </Link>
+            )}
           </span>
         ))}
       </div>

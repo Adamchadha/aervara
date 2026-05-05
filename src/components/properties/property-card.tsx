@@ -18,7 +18,7 @@ import { getDealMemo } from "@/lib/deal-memo";
 import { getOpportunityEngineRead } from "@/lib/opportunity-engine";
 import { DealConfidenceMeter } from "@/components/properties/deal-confidence-meter";
 import { FarVerticalCapacityBar } from "@/components/properties/far-vertical-capacity-bar";
-import { withDemoQuery } from "@/lib/demo-query";
+import { propertyDetailHref } from "@/lib/demo-query";
 import {
   computeOpportunityScoreForProperty,
   opportunityPriorityLabel,
@@ -39,6 +39,8 @@ type PropertyCardProps = {
   highlightLabel?: string;
   /** Preserve `?demo=true` on the Site Room link. */
   isDemo?: boolean;
+  /** Standalone `/demo` workspace detail route. */
+  publicDemo?: boolean;
   /** Override Site Room / detail href (e.g. `/demo/properties/…`). */
   detailHref?: string;
   /** Optional precomputed dashboard score (0-100). */
@@ -52,11 +54,13 @@ export function PropertyCard({
   emphasize = false,
   highlightLabel,
   isDemo = false,
+  publicDemo = false,
   detailHref,
   opportunityScore,
   surface = "default",
 }: PropertyCardProps) {
-  const siteRoomHref = detailHref ?? withDemoQuery(`/properties/${p.id}`, isDemo);
+  const siteRoomHref =
+    detailHref ?? propertyDetailHref(p.id, { isDemo, publicDemo });
   const m = getDisplayMetricsForRow(p);
   const dev = getDevelopmentAnalysisForProperty(p);
   const read = getOpportunityEngineRead(p);

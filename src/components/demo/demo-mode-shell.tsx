@@ -25,7 +25,7 @@ export function DemoModeShell({ children }: { children: ReactNode }) {
   return (
     <DemoToastContext.Provider value={showDemoToast}>
       <div
-        className="min-h-svh bg-[#fbfaf6] text-stone-900"
+        className="flex min-h-svh flex-col bg-transparent text-stone-900"
         onClickCapture={(e) => {
           const target = e.target as HTMLElement;
           if (target.closest("[data-demo-silent]")) return;
@@ -40,7 +40,7 @@ export function DemoModeShell({ children }: { children: ReactNode }) {
       >
         <div
           data-demo-silent
-          className="border-b border-stone-200/60 bg-white/85 px-4 py-3 text-center text-sm text-stone-600 shadow-[0_1px_0_rgba(15,23,42,0.04)] backdrop-blur-md sm:px-6"
+          className="relative z-[35] border-b border-stone-200/60 bg-white/85 px-4 py-2.5 text-center text-[13px] text-stone-600 shadow-[0_1px_0_rgba(15,23,42,0.04)] backdrop-blur-md sm:px-6"
         >
           <span className="font-semibold tracking-tight text-stone-900">Demo Mode</span>
           <span className="text-stone-500">
@@ -48,7 +48,7 @@ export function DemoModeShell({ children }: { children: ReactNode }) {
             — sample data. Changes are not saved.
           </span>
         </div>
-        <div className="px-4 pb-16 pt-8 sm:px-6 lg:px-8">{children}</div>
+        {children}
         {toastVisible ? (
           <div
             role="status"

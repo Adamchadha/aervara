@@ -29,7 +29,7 @@ import {
   BlueprintLoadingSurface,
   BlueprintMapGeocodeOverlay,
 } from "@/components/states/blueprint-loading-surface";
-import { withDemoQuery } from "@/lib/demo-query";
+import { propertyDetailHref } from "@/lib/demo-query";
 import { cn } from "@/lib/utils";
 import type { PropertyRow } from "@/types/property";
 
@@ -61,6 +61,7 @@ export type PropertiesMapViewProps = {
   totalPipelineCount: number;
   topDealPropertyIds: ReadonlySet<string>;
   isDemo?: boolean;
+  publicDemo?: boolean;
 };
 
 function fixLeafletDefaultIcons() {
@@ -107,9 +108,11 @@ function FitBounds({ points }: { points: [number, number][] }) {
 function MapPopupCard({
   property: p,
   isDemo,
+  publicDemo,
 }: {
   property: PropertyRow;
   isDemo: boolean;
+  publicDemo: boolean;
 }) {
   const m = getDisplayMetricsForRow(p);
   const read = getOpportunityEngineRead(p);
@@ -155,7 +158,7 @@ function MapPopupCard({
           </p>
         </div>
         <Button variant="secondary" className="h-9 w-full text-xs" asChild>
-          <Link href={withDemoQuery(`/properties/${p.id}`, isDemo)}>
+          <Link href={propertyDetailHref(p.id, { isDemo, publicDemo })}>
             View property details
           </Link>
         </Button>
@@ -169,6 +172,7 @@ export default function PropertiesMapView({
   totalPipelineCount,
   topDealPropertyIds,
   isDemo = false,
+  publicDemo = false,
 }: PropertiesMapViewProps) {
   const [status, setStatus] = useState<GeocodeStatus>("idle");
   const [coordById, setCoordById] = useState<
@@ -426,7 +430,7 @@ export default function PropertiesMapView({
                   minWidth={268}
                   maxWidth={320}
                 >
-                  <MapPopupCard property={p} isDemo={isDemo} />
+                  <MapPopupCard property={p} isDemo={isDemo} publicDemo={publicDemo} />
                 </Popup>
               </Marker>
             );

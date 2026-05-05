@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatedMeterBar } from "@/components/properties/dashboard-animated-meter-bar";
 import { AnimatedMoneyValue } from "@/components/ui/animated-money-value";
-import { withDemoQuery } from "@/lib/demo-query";
+import { propertyDetailHref } from "@/lib/demo-query";
 import { formatMoney } from "@/lib/far-calculations";
 import { cn } from "@/lib/utils";
 import type { PropertyRow } from "@/types/property";
@@ -50,6 +50,7 @@ type DashboardHeroTopDealProps = {
   thesisLine: string;
   insightBullets: [string, string];
   isDemo?: boolean;
+  publicDemo?: boolean;
 };
 
 export function DashboardHeroTopDeal({
@@ -60,6 +61,7 @@ export function DashboardHeroTopDeal({
   thesisLine,
   insightBullets,
   isDemo = false,
+  publicDemo = false,
 }: DashboardHeroTopDealProps) {
   const scorePct = clampPercent(opportunityScore);
   const showCompactUpside =
@@ -160,7 +162,7 @@ export function DashboardHeroTopDeal({
                 trackClassName="bg-stone-200"
               />
               <Link
-                href={withDemoQuery(`/properties/${p.id}`, isDemo)}
+                href={propertyDetailHref(p.id, { isDemo, publicDemo })}
                 className={cn(
                   "mt-4 inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-500",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2",

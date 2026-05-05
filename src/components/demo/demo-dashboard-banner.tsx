@@ -9,12 +9,18 @@ export function DemoDashboardBanner({
   isDemo,
   unlockedValueLabel,
   marketLabel,
+  publicDemo = false,
 }: {
   isDemo: boolean;
   unlockedValueLabel: string;
   marketLabel: string;
+  /** Public `/demo` route — apply flow returns here instead of `?demo=true` dashboard. */
+  publicDemo?: boolean;
 }) {
   if (!isDemo) return null;
+
+  const applyNext = publicDemo ? "/demo" : demoAwarePath("/dashboard", true);
+  const applySource = publicDemo ? "/demo" : demoAwarePath("/dashboard", true);
 
   return (
     <div className="rounded-[1.35rem] border border-sky-200/65 bg-gradient-to-br from-sky-50/95 via-white to-white px-6 py-7 shadow-[0_2px_12px_rgba(14,116,144,0.06),0_20px_54px_-30px_rgba(14,116,144,0.2)] ring-1 ring-sky-900/[0.04] sm:px-8 sm:py-8">
@@ -24,11 +30,14 @@ export function DemoDashboardBanner({
             Demo
           </p>
           <h1 className="mt-3 max-w-3xl text-[1.55rem] font-semibold tracking-[-0.03em] text-neutral-950 sm:text-[1.9rem] sm:leading-[1.14]">
-            Find buildings sitting on millions in unused air rights.
+            {publicDemo
+              ? "Find underbuilt properties before the market prices them in."
+              : "Find buildings sitting on millions in unused air rights."}
           </h1>
           <p className="mt-3 max-w-2xl text-[0.95rem] leading-relaxed text-neutral-600 sm:text-base">
-            Aervara surfaces hidden development value across cities before the
-            market prices it in.
+            {publicDemo
+              ? "Explore sample Chicago and Madison opportunities ranked by unused FAR, modeled upside, and deal confidence."
+              : "Aervara surfaces hidden development value across cities before the market prices it in."}
           </p>
           <p className="mt-4 inline-flex rounded-full border border-emerald-200/70 bg-emerald-50/75 px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-emerald-900">
             {unlockedValueLabel} in unlocked development value across {marketLabel}
@@ -38,8 +47,8 @@ export function DemoDashboardBanner({
           <Button asChild className="h-11 rounded-xl px-6 text-sm font-semibold">
             <Link
               href={requestFullAccessHref({
-                nextPath: demoAwarePath("/dashboard", true),
-                sourceRoute: demoAwarePath("/dashboard", true),
+                nextPath: applyNext,
+                sourceRoute: applySource,
               })}
             >
               Request Full Access

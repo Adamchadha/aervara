@@ -19,11 +19,13 @@ type ViewMode = "list" | "map";
 type DashboardPropertiesProps = {
   properties: PropertyRow[];
   isDemo?: boolean;
+  publicDemo?: boolean;
 };
 
 export function DashboardProperties({
   properties,
   isDemo = false,
+  publicDemo = false,
 }: DashboardPropertiesProps) {
   const [view, setView] = useState<ViewMode>("list");
   const [cityFilter, setCityFilter] = useState("");
@@ -144,6 +146,7 @@ export function DashboardProperties({
             totalPipelineCount={properties.length}
             topDealPropertyIds={topDealIds}
             isDemo={isDemo}
+            publicDemo={publicDemo}
           />
         ) : (
           <PropertiesMapView
@@ -151,6 +154,7 @@ export function DashboardProperties({
             totalPipelineCount={properties.length}
             topDealPropertyIds={topDealIds}
             isDemo={isDemo}
+            publicDemo={publicDemo}
           />
         )}
       </div>

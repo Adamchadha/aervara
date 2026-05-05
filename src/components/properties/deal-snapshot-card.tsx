@@ -6,7 +6,7 @@ import {
   DealSnapshotScoreBar,
 } from "@/components/properties/dashboard-animated-meter-bar";
 import { formatFar, formatMoney, formatSqft } from "@/lib/far-calculations";
-import { withDemoQuery } from "@/lib/demo-query";
+import { propertyDetailHref } from "@/lib/demo-query";
 import { cn } from "@/lib/utils";
 import type { PropertyRow } from "@/types/property";
 
@@ -24,6 +24,7 @@ type DealSnapshotCardProps = {
   score: number;
   priorityLabel: string;
   isDemo?: boolean;
+  publicDemo?: boolean;
 };
 
 /** Investment memo–style snapshot; softer than hero, same system. */
@@ -36,6 +37,7 @@ export function DealSnapshotCard({
   score,
   priorityLabel,
   isDemo = false,
+  publicDemo = false,
 }: DealSnapshotCardProps) {
   const farPct = maxFar > 0 ? clampPct((builtFar / maxFar) * 100) : 0;
   return (
@@ -89,7 +91,7 @@ export function DealSnapshotCard({
       </div>
       <div className="mt-3.5">
         <Link
-          href={withDemoQuery(`/properties/${p.id}`, isDemo)}
+          href={propertyDetailHref(p.id, { isDemo, publicDemo })}
           className="inline-flex rounded-md border border-emerald-200/65 bg-emerald-50/45 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-emerald-700 transition-colors hover:bg-emerald-50/75"
         >
           Open deal
