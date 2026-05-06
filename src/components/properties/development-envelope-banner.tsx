@@ -45,67 +45,73 @@ export function DevelopmentEnvelopeBanner({
   return (
     <>
       <div className={trailingMargin ? "mb-16" : ""}>
-        <button
-          type="button"
-          onClick={() => setDevelopmentEnvelopeOpen(true)}
-          className="group relative w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#071827] p-8 text-left text-white shadow-[0_20px_60px_rgba(2,6,23,0.25)] transition duration-300 hover:shadow-[0_28px_72px_rgba(2,6,23,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fbfaf6]"
+        <section
+          aria-labelledby="development-envelope-card-heading"
+          className="relative w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#071827] p-8 text-left text-white shadow-[0_20px_60px_rgba(2,6,23,0.25)] transition duration-300 hover:shadow-[0_28px_72px_rgba(2,6,23,0.32)]"
         >
-        <img
-          src="/images/aervara-floor-plan-overlay.png"
-          alt=""
-          className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center opacity-[0.38] [filter:contrast(1.12)_brightness(1.06)_saturate(0.92)]"
-        />
-        <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#071827]/96 via-[#071827]/82 to-[#071827]/65" />
+          <img
+            src="/images/aervara-floor-plan-overlay.png"
+            alt=""
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover object-center opacity-[0.38] [filter:contrast(1.12)_brightness(1.06)_saturate(0.92)]"
+          />
+          <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#071827]/96 via-[#071827]/82 to-[#071827]/65" />
 
-        <div className="relative z-10 max-w-xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/65">
-            Development envelope
-          </p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85">
-              Illustrative only
-            </span>
-            <p className="max-w-md text-[10px] leading-snug text-white/55">
-              Not a surveyed parcel boundary or approved building footprint.
+          <div className="relative z-10 max-w-xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/65">
+              Development envelope
             </p>
-          </div>
-          <p className="mt-2 max-w-md text-[10px] leading-snug text-white/50">
-            Illustrative envelope view — verify with parcel geometry and official records.
-          </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-white">
-            Floor plan logic, FAR capacity, and buildable-area assumptions in one view.
-          </h2>
-          <p className="mt-4 text-base font-medium leading-relaxed text-white/82">
-            Use this parcel memo to review modeled area, vertical capacity, and
-            redevelopment assumptions before opening deeper scenario analysis.
-          </p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85">
+                Illustrative only
+              </span>
+              <p className="max-w-md text-[10px] leading-snug text-white/55">
+                Not a surveyed parcel boundary or approved building footprint.
+              </p>
+            </div>
+            <p className="mt-2 max-w-md text-[10px] leading-snug text-white/50">
+              Illustrative envelope view — verify with parcel geometry and official records.
+            </p>
+            <h2
+              id="development-envelope-card-heading"
+              className="mt-4 text-3xl font-bold tracking-tight text-white"
+            >
+              Floor plan logic, FAR capacity, and buildable-area assumptions in one view.
+            </h2>
+            <p className="mt-4 text-base font-medium leading-relaxed text-white/82">
+              Use this parcel memo to review modeled area, vertical capacity, and
+              redevelopment assumptions before opening deeper scenario analysis.
+            </p>
 
-          <div className="mt-6 grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <p className="text-white/50">Zoning</p>
-              <p className="mt-1 font-semibold text-white">{zoning}</p>
+            <div className="mt-6 grid grid-cols-3 gap-4 text-sm">
+              <div>
+                <p className="text-white/50">Zoning</p>
+                <p className="mt-1 font-semibold text-white">{zoning}</p>
+              </div>
+              <div>
+                <p className="text-white/50">Unused area</p>
+                <p className="mt-1 font-semibold text-white">{unusedSqft}</p>
+              </div>
+              <div>
+                <p className="text-white/50">Modeled FAR</p>
+                <p className="mt-1 font-semibold text-white">{modeledFar}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-white/50">Unused area</p>
-              <p className="mt-1 font-semibold text-white">{unusedSqft}</p>
-            </div>
-            <div>
-              <p className="text-white/50">Modeled FAR</p>
-              <p className="mt-1 font-semibold text-white">{modeledFar}</p>
-            </div>
-          </div>
 
-          <span className="mt-6 inline-flex items-center rounded-full bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.16em] text-[#071827] shadow-[0_8px_24px_rgba(2,6,23,0.18)] transition-opacity duration-200 hover:opacity-90">
-            Learn how this is calculated →
-          </span>
-        </div>
-      </button>
+            <button
+              type="button"
+              onClick={() => setDevelopmentEnvelopeOpen(true)}
+              className="mt-6 inline-flex items-center rounded-full bg-white px-4 py-2.5 text-xs font-medium uppercase tracking-[0.16em] text-[#071827] shadow-[0_8px_24px_rgba(2,6,23,0.18)] transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#071827]"
+            >
+              Learn how this is calculated →
+            </button>
+          </div>
+        </section>
       </div>
 
       {developmentEnvelopeOpen ? (
         <div
           role="presentation"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4"
           onClick={close}
         >
           <div

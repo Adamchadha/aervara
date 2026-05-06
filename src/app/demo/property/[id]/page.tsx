@@ -113,7 +113,7 @@ export default async function PublicDemoPropertyPage({
         ← Back to demo deals
       </Link>
 
-      <div className="mt-6 space-y-8 lg:space-y-10">
+      <div className="mt-6 flex flex-col gap-8">
         <PublicDemoSiteRoomMemoHeader
           property={p}
           dealReportPayload={dealReportPayload}
