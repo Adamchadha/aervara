@@ -19,9 +19,9 @@ export function PublicDemoSiteRoomMemoHeader({
   return (
     <header
       id="site-room"
-      className="relative z-30 mx-auto w-full max-w-5xl scroll-mt-24 overflow-visible rounded-[2rem] border border-stone-200/70 bg-white/90 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-md"
+      className="relative mx-auto w-full max-w-5xl scroll-mt-24 overflow-hidden rounded-[2rem] border border-stone-200/70 bg-white/90 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-md"
     >
-      <div className="relative z-[1] grid min-h-0 h-full overflow-hidden rounded-[2rem] lg:grid-cols-[1fr_340px]">
+      <div className="relative grid min-h-0 h-full overflow-hidden rounded-[2rem] lg:grid-cols-[1fr_340px]">
         <div className="h-full min-w-0 rounded-l-[2rem] bg-white/85 p-8 backdrop-blur-sm sm:p-10">
           <div className="mt-2 inline-flex items-center rounded-full border border-amber-200/65 bg-gradient-to-r from-amber-50/90 to-amber-50/40 px-3.5 py-1.5 shadow-sm">
             <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-amber-950/85">

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PublicDemoSiteRoomMemoHeader } from "@/components/demo/public-demo-site-room-memo-header";
-import { DashboardHeroTopDeal } from "@/components/properties/dashboard-hero-top-deal";
 import { DevelopmentEnvelopeBanner } from "@/components/properties/development-envelope-banner";
 import { PublicDemoPropertyExperience } from "@/components/properties/public-demo-property-experience";
 import { computeDealConfidence } from "@/lib/deal-confidence";
@@ -18,27 +17,14 @@ import {
 } from "@/lib/far-calculations";
 import { getDealMemo } from "@/lib/deal-memo";
 import { getOpportunityEngineRead } from "@/lib/opportunity-engine";
-import {
-  computeOpportunityScoreForProperty,
-  computeOpportunityScores,
-  opportunityPriorityLabel,
-} from "@/lib/opportunity-score";
 import { getDisplayMetricsForRow } from "@/lib/property-display-metrics";
-import {
-  getPublicDemoProperties,
-  getPublicDemoPropertyById,
-  PUBLIC_DEMO_HERO_ADDRESS,
-  PUBLIC_DEMO_WABASH_OPPORTUNITY_SCORE,
-} from "@/lib/public-demo-properties";
+import { getPublicDemoPropertyById } from "@/lib/public-demo-properties";
 import type { DealReportPayload } from "@/types/deal-report-payload";
 
 function num(v: unknown): number {
   const n = typeof v === "number" ? v : Number(v);
   return Number.isFinite(n) ? n : 0;
 }
-
-const HERO_THESIS =
-  "Underbuilt urban parcel with meaningful vertical capacity and premium repositioning optionality.";
 
 export default async function PublicDemoPropertyPage({
   params,
@@ -66,23 +52,6 @@ export default async function PublicDemoPropertyPage({
   });
 
   const hubPath = `/demo/properties/${p.id}`;
-
-  const demoScores = computeOpportunityScores(getPublicDemoProperties());
-  const rankedScore =
-    demoScores.get(p.id) ?? computeOpportunityScoreForProperty(p);
-  const heroOpportunityScore =
-    p.address === PUBLIC_DEMO_HERO_ADDRESS
-      ? PUBLIC_DEMO_WABASH_OPPORTUNITY_SCORE
-      : rankedScore;
-
-  const farHeadroom = Math.max(0, maxF - num(m.current_built_far));
-  const insightBullets: [string, string] = [
-    `${formatSqft(m.unused_buildable_sqft)} sq ft unused buildable in the modeled envelope.`,
-    `${formatFar(m.current_built_far)} built FAR vs ${formatFar(maxF)} max · ${formatFar(farHeadroom)} headroom · ${p.zoning_district}.`,
-  ];
-
-  const heroPriority = opportunityPriorityLabel(heroOpportunityScore);
-  const opportunityValue = m.opportunity_value ?? 0;
 
   const generatedDateLabel = new Intl.DateTimeFormat("en-US", {
     dateStyle: "long",
@@ -144,36 +113,21 @@ export default async function PublicDemoPropertyPage({
         ← Back to demo deals
       </Link>
 
-      <div className="mt-6">
-        <DashboardHeroTopDeal
-          property={p}
-          opportunityValue={opportunityValue}
-          opportunityScore={heroOpportunityScore}
-          priorityLabel={heroPriority}
-          thesisLine={HERO_THESIS}
-          insightBullets={insightBullets}
-          isDemo
-          publicDemo
-          ctaHref="#site-room"
-        />
-      </div>
-
-      <div className="mt-8 space-y-8">
+      <div className="mt-6 space-y-8 lg:space-y-10">
         <PublicDemoSiteRoomMemoHeader
           property={p}
           dealReportPayload={dealReportPayload}
           initialPipelineStatus={p.status}
         />
 
-        <div className="relative z-10">
-          <DevelopmentEnvelopeBanner
-            zoning={p.zoning_district?.trim() ? p.zoning_district : "—"}
-            unusedSqft={formatSqft(m.unused_buildable_sqft)}
-            modeledFar={`${formatFar(m.current_built_far)} / ${formatFar(maxF)}`}
-            modalFarHeadroom={formatFar(m.unused_vertical_capacity)}
-            modalModeledUpside={formatMoney(m.opportunity_value)}
-          />
-        </div>
+        <DevelopmentEnvelopeBanner
+          zoning={p.zoning_district?.trim() ? p.zoning_district : "—"}
+          unusedSqft={formatSqft(m.unused_buildable_sqft)}
+          modeledFar={`${formatFar(m.current_built_far)} / ${formatFar(maxF)}`}
+          modalFarHeadroom={formatFar(m.unused_vertical_capacity)}
+          modalModeledUpside={formatMoney(m.opportunity_value)}
+          trailingMargin={false}
+        />
 
         <PublicDemoPropertyExperience
           property={p}

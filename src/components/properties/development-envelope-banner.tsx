@@ -8,6 +8,8 @@ export type DevelopmentEnvelopeBannerProps = {
   modeledFar: string;
   modalFarHeadroom: string;
   modalModeledUpside: string;
+  /** When false, omit bottom margin so parent `space-y-*` controls vertical rhythm (e.g. demo hub). */
+  trailingMargin?: boolean;
 };
 
 export function DevelopmentEnvelopeBanner({
@@ -16,6 +18,7 @@ export function DevelopmentEnvelopeBanner({
   modeledFar,
   modalFarHeadroom,
   modalModeledUpside,
+  trailingMargin = true,
 }: DevelopmentEnvelopeBannerProps) {
   const [developmentEnvelopeOpen, setDevelopmentEnvelopeOpen] = useState(false);
 
@@ -41,11 +44,11 @@ export function DevelopmentEnvelopeBanner({
 
   return (
     <>
-      <div className="mb-16">
+      <div className={trailingMargin ? "mb-16" : ""}>
         <button
           type="button"
           onClick={() => setDevelopmentEnvelopeOpen(true)}
-          className="group relative w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#071827] p-8 text-left text-white shadow-[0_20px_60px_rgba(2,6,23,0.25)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_28px_72px_rgba(2,6,23,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fbfaf6]"
+          className="group relative w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#071827] p-8 text-left text-white shadow-[0_20px_60px_rgba(2,6,23,0.25)] transition duration-300 hover:shadow-[0_28px_72px_rgba(2,6,23,0.32)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fbfaf6]"
         >
         <img
           src="/images/aervara-floor-plan-overlay.png"
