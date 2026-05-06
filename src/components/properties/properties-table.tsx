@@ -1,9 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { PublicDemoPropertyLink } from "@/components/demo/public-demo-property-link";
 import { PropertyCard } from "@/components/properties/property-card";
-import { propertyDetailHref } from "@/lib/demo-query";
 import { formatMoney } from "@/lib/far-calculations";
 import { getDisplayMetricsForRow } from "@/lib/property-display-metrics";
 import { computeOpportunityScores } from "@/lib/opportunity-score";
@@ -100,12 +99,14 @@ export function PropertiesTable({
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right sm:px-5">
-                    <Link
-                      href={propertyDetailHref(p.id, { isDemo, publicDemo })}
+                    <PublicDemoPropertyLink
+                      propertyId={p.id}
+                      isDemo={isDemo}
+                      publicDemo={publicDemo}
                       className="inline-flex rounded-md border border-emerald-200/70 bg-emerald-50/45 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-emerald-700 transition-colors hover:bg-emerald-50/80"
                     >
                       Open deal
-                    </Link>
+                    </PublicDemoPropertyLink>
                   </td>
                 </tr>
               );

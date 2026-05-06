@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
+import { PublicDemoPropertyLink } from "@/components/demo/public-demo-property-link";
 import {
   MapContainer,
   Marker,
@@ -29,7 +30,6 @@ import {
   BlueprintLoadingSurface,
   BlueprintMapGeocodeOverlay,
 } from "@/components/states/blueprint-loading-surface";
-import { propertyDetailHref } from "@/lib/demo-query";
 import { cn } from "@/lib/utils";
 import type { PropertyRow } from "@/types/property";
 
@@ -158,9 +158,14 @@ function MapPopupCard({
           </p>
         </div>
         <Button variant="secondary" className="h-9 w-full text-xs" asChild>
-          <Link href={propertyDetailHref(p.id, { isDemo, publicDemo })}>
+          <PublicDemoPropertyLink
+            propertyId={p.id}
+            isDemo={isDemo}
+            publicDemo={publicDemo}
+            className="inline-flex h-9 w-full items-center justify-center rounded-md text-xs"
+          >
             View property details
-          </Link>
+          </PublicDemoPropertyLink>
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePublicDemoWorkspace } from "@/components/demo/public-demo-workspace";
 import {
   AnimatedMeterBar,
   DealSnapshotScoreBar,
@@ -39,6 +40,7 @@ export function DealSnapshotCard({
   isDemo = false,
   publicDemo = false,
 }: DealSnapshotCardProps) {
+  const inPublicDemoWorkspace = usePublicDemoWorkspace();
   const farPct = maxFar > 0 ? clampPct((builtFar / maxFar) * 100) : 0;
   return (
     <article
@@ -91,7 +93,10 @@ export function DealSnapshotCard({
       </div>
       <div className="mt-3.5">
         <Link
-          href={propertyDetailHref(p.id, { isDemo, publicDemo })}
+          href={propertyDetailHref(p.id, {
+            isDemo,
+            publicDemo: publicDemo || inPublicDemoWorkspace,
+          })}
           className="inline-flex rounded-md border border-emerald-200/65 bg-emerald-50/45 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-emerald-700 transition-colors hover:bg-emerald-50/75"
         >
           Open deal

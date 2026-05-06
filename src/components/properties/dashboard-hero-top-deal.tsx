@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePublicDemoWorkspace } from "@/components/demo/public-demo-workspace";
 import { AnimatedMeterBar } from "@/components/properties/dashboard-animated-meter-bar";
 import { AnimatedMoneyValue } from "@/components/ui/animated-money-value";
 import { propertyDetailHref } from "@/lib/demo-query";
@@ -66,8 +67,13 @@ export function DashboardHeroTopDeal({
   publicDemo = false,
   ctaHref,
 }: DashboardHeroTopDealProps) {
+  const inPublicDemoWorkspace = usePublicDemoWorkspace();
   const dealHref =
-    ctaHref ?? propertyDetailHref(p.id, { isDemo, publicDemo });
+    ctaHref ??
+    propertyDetailHref(p.id, {
+      isDemo,
+      publicDemo: publicDemo || inPublicDemoWorkspace,
+    });
   const scorePct = clampPercent(opportunityScore);
   const showCompactUpside =
     Number.isFinite(opportunityValue) && Math.abs(opportunityValue) >= IMPLIED_UPSIDE_COMPACT_MIN;

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PublicDemoPropertyLink } from "@/components/demo/public-demo-property-link";
 import { AnimatedMoneyValue } from "@/components/ui/animated-money-value";
 import {
   formatFar,
@@ -18,7 +18,6 @@ import { getDealMemo } from "@/lib/deal-memo";
 import { getOpportunityEngineRead } from "@/lib/opportunity-engine";
 import { DealConfidenceMeter } from "@/components/properties/deal-confidence-meter";
 import { FarVerticalCapacityBar } from "@/components/properties/far-vertical-capacity-bar";
-import { propertyDetailHref } from "@/lib/demo-query";
 import {
   computeOpportunityScoreForProperty,
   opportunityPriorityLabel,
@@ -59,8 +58,6 @@ export function PropertyCard({
   opportunityScore,
   surface = "default",
 }: PropertyCardProps) {
-  const siteRoomHref =
-    detailHref ?? propertyDetailHref(p.id, { isDemo, publicDemo });
   const m = getDisplayMetricsForRow(p);
   const dev = getDevelopmentAnalysisForProperty(p);
   const read = getOpportunityEngineRead(p);
@@ -130,12 +127,15 @@ export function PropertyCard({
           <span className="text-neutral-500">{scoreLabel}</span>
         </div>
         <div className="mt-4 flex justify-end border-t border-stone-100/90 pt-3">
-          <Link
-            href={siteRoomHref}
+          <PublicDemoPropertyLink
+            propertyId={p.id}
+            isDemo={isDemo}
+            publicDemo={publicDemo}
+            detailHref={detailHref}
             className="text-sm font-semibold text-emerald-600 transition-colors hover:text-emerald-500"
           >
             Open deal →
-          </Link>
+          </PublicDemoPropertyLink>
         </div>
       </article>
     );
@@ -397,12 +397,15 @@ export function PropertyCard({
         ) : null}
 
         <div className="mt-auto flex justify-end pb-7 pt-7">
-          <Link
-            href={siteRoomHref}
+          <PublicDemoPropertyLink
+            propertyId={p.id}
+            isDemo={isDemo}
+            publicDemo={publicDemo}
+            detailHref={detailHref}
             className="rounded-lg px-2 py-1 text-sm font-semibold text-neutral-950 underline-offset-4 transition-colors hover:bg-neutral-100/80 hover:underline"
           >
             View details
-          </Link>
+          </PublicDemoPropertyLink>
         </div>
       </div>
     </article>
