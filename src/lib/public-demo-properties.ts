@@ -54,6 +54,7 @@ function applyPublicDemoHeroMetrics(row: PropertyRow): PropertyRow {
   return {
     ...row,
     max_far: maxFar,
+    zoning_district: "DX-16",
     status: "Priority",
     current_built_far: current,
     remaining_far: remaining,

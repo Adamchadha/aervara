@@ -202,7 +202,7 @@ export function PublicDemoPropertyExperience({
       ) : null}
 
       <SiteRoomSection
-        id={suppressMarketingHeader ? "site-room" : "why-deal"}
+        id={suppressMarketingHeader ? "deal-rationale" : "why-deal"}
         step="01"
         label="Deal rationale"
         title="Why this is a deal"
