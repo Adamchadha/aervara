@@ -1,29 +1,32 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  DemoPropertyCinematicHero,
-  DemoPropertyHeroFadeBridge,
-} from "@/components/demo/demo-property-cinematic-hero";
 import { DemoPipelineStatus } from "@/components/demo/demo-pipeline-status";
+import { DashboardHeroTopDeal } from "@/components/properties/dashboard-hero-top-deal";
 import { PublicDemoPropertyExperience } from "@/components/properties/public-demo-property-experience";
 import { computeDealConfidence } from "@/lib/deal-confidence";
-import { requestFullAccessHref } from "@/lib/demo-flow";
+import { formatFar, formatSqft } from "@/lib/far-calculations";
 import { getDealMemo } from "@/lib/deal-memo";
-import { formatFar, formatMoney, formatSqft } from "@/lib/far-calculations";
 import { getOpportunityEngineRead } from "@/lib/opportunity-engine";
 import {
   computeOpportunityScoreForProperty,
   computeOpportunityScores,
+  opportunityPriorityLabel,
 } from "@/lib/opportunity-score";
 import { getDisplayMetricsForRow } from "@/lib/property-display-metrics";
 import {
   getPublicDemoProperties,
   getPublicDemoPropertyById,
+  PUBLIC_DEMO_HERO_ADDRESS,
+  PUBLIC_DEMO_WABASH_OPPORTUNITY_SCORE,
 } from "@/lib/public-demo-properties";
 
 function num(v: unknown): number {
   const n = typeof v === "number" ? v : Number(v);
   return Number.isFinite(n) ? n : 0;
 }
+
+const HERO_THESIS =
+  "Underbuilt urban parcel with meaningful vertical capacity and premium repositioning optionality.";
 
 export default async function PublicDemoPropertyPage({
   params,
@@ -50,62 +53,70 @@ export default async function PublicDemoPropertyPage({
   });
 
   const hubPath = `/demo/properties/${p.id}`;
-  const accessHref = requestFullAccessHref({
-    nextPath: hubPath,
-    sourceRoute: hubPath,
-  });
 
   const demoScores = computeOpportunityScores(getPublicDemoProperties());
-  const opportunityScore =
+  const rankedScore =
     demoScores.get(p.id) ?? computeOpportunityScoreForProperty(p);
+  const heroOpportunityScore =
+    p.address === PUBLIC_DEMO_HERO_ADDRESS
+      ? PUBLIC_DEMO_WABASH_OPPORTUNITY_SCORE
+      : rankedScore;
 
-  const potentialValueLine =
-    m.opportunity_value != null && Number.isFinite(m.opportunity_value)
-      ? `${formatMoney(m.opportunity_value)} potential development value`
-      : "Modeled value unavailable";
+  const farHeadroom = Math.max(0, maxF - num(m.current_built_far));
+  const insightBullets: [string, string] = [
+    `${formatSqft(m.unused_buildable_sqft)} sq ft unused buildable in the modeled envelope.`,
+    `${formatFar(m.current_built_far)} built FAR vs ${formatFar(maxF)} max · ${formatFar(farHeadroom)} headroom · ${p.zoning_district}.`,
+  ];
+
+  const heroPriority = opportunityPriorityLabel(heroOpportunityScore);
+  const opportunityValue = m.opportunity_value ?? 0;
 
   return (
-    <>
-      <DemoPropertyCinematicHero
-        address={p.address}
-        subtitle={`${p.city}, ${p.state} • ${p.zoning_district}`}
-        potentialValueLine={potentialValueLine}
-        unusedBuildableLine={`${formatSqft(m.unused_buildable_sqft)} sq ft unused buildable`}
-        farLine={`${formatFar(m.current_built_far)} / ${formatFar(maxF)}`}
-        opportunityScore={opportunityScore}
-        backHref="/demo"
-        backLabel="← Back to demo deals"
-        siteRoomHash="#site-room"
-        accessHref={accessHref}
-      />
+    <div className="mx-auto w-full max-w-5xl px-4 pb-12 pt-2 sm:px-6 lg:pb-16">
+      <Link
+        href="/demo"
+        className="-ml-1 inline-flex rounded-xl px-2.5 py-1.5 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-100/90 hover:text-stone-950"
+      >
+        ← Back to demo deals
+      </Link>
 
-      <div className="mx-auto w-full max-w-5xl">
-        <DemoPropertyHeroFadeBridge>
-          <div className="px-4 pb-2 pt-5 sm:px-6 sm:pt-7">
-            <div className="rounded-2xl border border-stone-200/70 bg-white/90 px-5 py-5 shadow-sm">
-              <DemoPipelineStatus initialStatus={p.status} />
-            </div>
-            <PublicDemoPropertyExperience
-              property={p}
-              metrics={m}
-              dealMemo={dealMemo}
-              engineRead={engineRead}
-              dealConfidence={dealConfidence}
-              viewerRole={null}
-              dealRoom={true}
-              lotSqft={lot}
-              builtSqft={built}
-              maxFar={maxF}
-              estValuePerSqft={est}
-              backHref="/demo"
-              backLinkLabel="← Back to demo deals"
-              applyNextPath={hubPath}
-              applySourcePath={hubPath}
-              suppressMarketingHeader
-            />
-          </div>
-        </DemoPropertyHeroFadeBridge>
+      <div className="mt-6">
+        <DashboardHeroTopDeal
+          property={p}
+          opportunityValue={opportunityValue}
+          opportunityScore={heroOpportunityScore}
+          priorityLabel={heroPriority}
+          thesisLine={HERO_THESIS}
+          insightBullets={insightBullets}
+          isDemo
+          publicDemo
+          ctaHref="#site-room"
+        />
       </div>
-    </>
+
+      <div className="mt-8 space-y-8 border-t border-stone-200/35 pt-8">
+        <div className="rounded-2xl border border-stone-200/70 bg-white/90 px-5 py-5 shadow-sm">
+          <DemoPipelineStatus initialStatus={p.status} />
+        </div>
+        <PublicDemoPropertyExperience
+          property={p}
+          metrics={m}
+          dealMemo={dealMemo}
+          engineRead={engineRead}
+          dealConfidence={dealConfidence}
+          viewerRole={null}
+          dealRoom={true}
+          lotSqft={lot}
+          builtSqft={built}
+          maxFar={maxF}
+          estValuePerSqft={est}
+          backHref="/demo"
+          backLinkLabel="← Back to demo deals"
+          applyNextPath={hubPath}
+          applySourcePath={hubPath}
+          suppressMarketingHeader
+        />
+      </div>
+    </div>
   );
 }

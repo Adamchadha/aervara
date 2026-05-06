@@ -51,6 +51,8 @@ type DashboardHeroTopDealProps = {
   insightBullets: [string, string];
   isDemo?: boolean;
   publicDemo?: boolean;
+  /** Same-page anchor or external path — default is property detail from `propertyDetailHref`. */
+  ctaHref?: string;
 };
 
 export function DashboardHeroTopDeal({
@@ -62,7 +64,10 @@ export function DashboardHeroTopDeal({
   insightBullets,
   isDemo = false,
   publicDemo = false,
+  ctaHref,
 }: DashboardHeroTopDealProps) {
+  const dealHref =
+    ctaHref ?? propertyDetailHref(p.id, { isDemo, publicDemo });
   const scorePct = clampPercent(opportunityScore);
   const showCompactUpside =
     Number.isFinite(opportunityValue) && Math.abs(opportunityValue) >= IMPLIED_UPSIDE_COMPACT_MIN;
@@ -162,7 +167,7 @@ export function DashboardHeroTopDeal({
                 trackClassName="bg-stone-200"
               />
               <Link
-                href={propertyDetailHref(p.id, { isDemo, publicDemo })}
+                href={dealHref}
                 className={cn(
                   "mt-4 inline-flex w-full items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-500",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 focus-visible:ring-offset-2",

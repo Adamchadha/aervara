@@ -71,7 +71,7 @@ export default function PublicDemoDashboardPage() {
           isDemo
           publicDemo
           pinHeroPropertyId={heroId}
-          pinHeroOpportunityScore={heroId != null ? 80 : undefined}
+          pinHeroOpportunityScore={heroId != null ? 93 : undefined}
           marketCities={allCityGroups}
         />
         <DashboardProperties properties={rows} isDemo publicDemo />

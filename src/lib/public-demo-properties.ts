@@ -6,6 +6,9 @@ import type { PropertyRow } from "@/types/property";
 /** Canonical hero parcel for `/demo` — must match seed row address. */
 export const PUBLIC_DEMO_HERO_ADDRESS = "401 N Wabash Ave" as const;
 
+/** Pinned opportunity score for Wabash on `/demo` (matches navy hero + dashboard pin). */
+export const PUBLIC_DEMO_WABASH_OPPORTUNITY_SCORE = 93;
+
 const DEMO_USER_ID = "00000000-0000-4000-8000-0000000000d0";
 const DEMO_TS = "2024-06-01T12:00:00.000Z";
 
@@ -45,16 +48,17 @@ function pickChicagoMadisonRows() {
  */
 function applyPublicDemoHeroMetrics(row: PropertyRow): PropertyRow {
   if (row.address !== PUBLIC_DEMO_HERO_ADDRESS) return row;
-  const maxFar = Number(row.max_far);
-  const current = 1.0;
-  const remaining = Math.max(0, maxFar - current);
+  const maxFar = 16;
+  const current = 8;
+  const remaining = maxFar - current;
   return {
     ...row,
+    max_far: maxFar,
     status: "Priority",
     current_built_far: current,
     remaining_far: remaining,
     unused_buildable_sqft: 200_000,
-    underbuilt_score: 95,
+    underbuilt_score: 93,
     opportunity_value: 100_000_000,
   };
 }
